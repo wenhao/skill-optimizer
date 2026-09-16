@@ -1,0 +1,125 @@
+# 字段定义 - 编写 AI Agent Skills 的最佳实践调研
+# JSON 输出格式：扁平结构，所有字段作为顶层 key
+# detail_level: 极简(一句话) / 简要(2-3句) / 详细(完整论述+数据+示例)
+# 本次调研统一 detail_level: 详细
+# 某字段若与该调研对象无关，值填 "不适用"；不确定的填 "[不确定]" 并列入 uncertain 数组
+
+field_categories:
+
+  - category: 基本信息
+    fields:
+      - name: name
+        description: 调研对象名称
+        detail_level: 极简
+        required: true
+      - name: source_type
+        description: 来源类型（官方规范/官方博客/开放标准/平台规范/官方文档/官方仓库/社区/方法论/通用原则）
+        detail_level: 极简
+        required: true
+      - name: platform
+        description: 适用平台（Claude/Claude Code/跨平台标准）
+        detail_level: 简要
+      - name: recency
+        description: 信息时效性（发布/更新时间，是否覆盖 2025-10 Agent Skills 正式发布后的内容）
+        detail_level: 简要
+      - name: versioning
+        description: 版本管理方式、适用模型范围（Haiku/Sonnet/Opus 指令粒度差异）
+        detail_level: 详细
+
+  - category: 设计原则
+    fields:
+      - name: core_principles
+        description: 核心设计原则清单（单一职责、渐进式披露、为模型而非人类写描述等）
+        detail_level: 详细
+        required: true
+      - name: taxonomy
+        description: 技能分类法映射（九大分类：库/API参考、产品验证、数据获取分析、业务流程自动化、代码脚手架、代码质量审查、CI/CD部署、Runbook、基础设施运维）；最佳 Skill 应干净归入一类，跨类即混淆
+        detail_level: 详细
+      - name: degrees_of_freedom
+        description: 自由度等级（高/中/低），匹配任务脆弱性——脆弱易错任务用低自由度（具体脚本），多路径有效任务用高自由度（文本指引）
+        detail_level: 详细
+      - name: naming_conventions
+        description: 命名规范（目录名、skill 名、触发词与命中的关系）
+        detail_level: 详细
+
+  - category: 结构规范
+    fields:
+      - name: frontmatter
+        description: frontmatter 必填/可选字段（name、description、when_to_use、disable-model-invocation、user-invocable、paths、context、version、allowed-tools 等）
+        detail_level: 详细
+      - name: body_structure
+        description: 正文结构建议（概述/步骤/gotchas区/示例编排），头部信息决定加载，正文按需阅读
+        detail_level: 详细
+      - name: file_organization
+        description: 文件组织（SKILL.md 主文件、scripts/ 可执行脚本、references/ 参考文档、assets/ 资源；存脚本别让 Claude 现写）
+        detail_level: 详细
+
+  - category: 编写要点
+    fields:
+      - name: description_writing
+        description: description 字段写法（为模型而非人类写、包含触发场景与区分度信息、第三人称）
+        detail_level: 详细
+        required: true
+      - name: trigger_design
+        description: 触发与调用控制（when_to_use、触发词设计、expected/negative triggers、何时自动加载 vs 仅手动调用）
+        detail_level: 详细
+      - name: progressive_disclosure
+        description: 渐进式披露实现（元数据~100 token 常驻 / 指令<5000 token 按需 / 资源文件按需读取三层级）
+        detail_level: 详细
+        required: true
+      - name: context_cost
+        description: 上下文成本量化（SKILL.md 行数/token 预算建议 <500行/<5000 token、缓存命中率、上下文腐烂 mitigation）
+        detail_level: 详细
+
+  - category: 执行与组合
+    fields:
+      - name: execution_model
+        description: 执行模型（内联执行 / context:fork 子代理执行 / 按需 hooks；model/effort 覆盖）
+        detail_level: 详细
+      - name: composition
+        description: 可组合性（manifest 而非 manual：父 Skill 只做索引<100行、内容下沉叶子 Skill、按名称相互引用、与 MCP 的互补编排）
+        detail_level: 详细
+      - name: dynamic_context
+        description: 动态上下文注入（!command 在加载前拉取实时数据，如 !git diff HEAD）
+        detail_level: 详细
+      - name: persistence
+        description: 持久化与记忆（config.json、CLAUDE_PLUGIN_DATA、log/JSON/SQLite 跨会话记住历史）
+        detail_level: 详细
+
+  - category: 质量与评估
+    fields:
+      - name: testing_methods
+        description: 测试方法（测试矩阵：正常操作/边界用例/越界不应触发；多模型测试 Haiku/Sonnet/Opus）
+        detail_level: 详细
+      - name: usage_metrics
+        description: 用量度量（PreToolUse hook 记录调用、发现冷门/误触发 Skill）
+        detail_level: 详细
+      - name: evaluation_loop
+        description: 评估闭环（LLM-as-judge 评分轨迹、迭代改进流程）
+        detail_level: 详细
+      - name: anti_patterns
+        description: 反模式清单（安慰剂 Skill、父 Skill 膨胀、盲目装 50 合 1 包、railroading、过度设计、上下文超载、模糊触发、对 Opus 调好对 Haiku 不足）
+        detail_level: 详细
+        required: true
+
+  - category: 安全与治理
+    fields:
+      - name: security_audit
+        description: 安全审计机制（风险分级实践、skill-vetter 自动审计、人工审计要点：allowed-tools/scripts/curl 未知URL/读取 ~/.ssh ~/.aws）
+        detail_level: 详细
+      - name: permissions
+        description: 权限最小化（allowed-tools/disallowed-tools 范围控制、提示词注入防护、安全沙箱、敏感命令二次确认）
+        detail_level: 详细
+      - name: distribution
+        description: 分发与治理（仓库提交 vs Plugin Marketplace、私有 registry、临时凭证、安装前必读 SKILL.md）
+        detail_level: 详细
+      - name: platform_compatibility
+        description: 平台兼容性（是否遵循 agentskills.io 开放标准、跨产品支持矩阵 Claude/Codex/Gemini CLI/Copilot/Cursor/VS Code、编写一次到处运行的约束）
+        detail_level: 详细
+
+# 不确定字段：deep 阶段自动填充
+uncertain:
+  - field: versioning
+    reason: 各平台版本管理细节需在 deep 阶段核实（是否普遍支持 version 字段）
+  - field: persistence
+    reason: 跨平台持久化机制差异较大，需逐平台核实

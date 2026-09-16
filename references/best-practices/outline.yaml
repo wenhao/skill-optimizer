@@ -1,0 +1,80 @@
+topic: 编写 AI Agent Skills 的最佳实践（聚焦 Anthropic Agent Skills、Claude Code 与开放标准生态）
+created: 2026-09-15
+updated: 2026-09-16
+time_range: 最近1年（2025-09 至今）
+detail_level: 详细
+
+items:
+  - id: 1
+    name: Anthropic Agent Skills 官方编写最佳实践
+    description: platform.claude.com 官方 best-practices 指南，SKILL.md 格式标准、渐进式披露三层级、命名与触发设计
+    source_type: 官方规范
+    url: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+  - id: 2
+    name: 《Writing effective tools for agents — with agents》工程博客
+    description: Anthropic Engineering 2026-01 发布的智能体工具设计原则，工具/技能一体化的设计哲学
+    source_type: 官方博客
+    url: https://www.anthropic.com/engineering/writing-tools-for-agents
+  - id: 3
+    name: 《Lessons from building Claude Code: How we use skills》
+    description: Anthropic 2026-06 一手实证：九大技能分类法、15 条可落地技巧、反模式实证（别说废话、建 gotchas 区、描述为模型而非人类写、存脚本别现写等）
+    source_type: 官方博客
+    url: https://claude.com/blog/lessons-from-building-claude-code-how-we-use-skills
+  - id: 4
+    name: Agent Skills 开放标准 agentskills.io
+    description: 2025-12-18 发布的开放标准与 SDK，26+ 平台采用；Skills 与 MCP 的互补关系（MCP 管能访问什么，Skills 管该怎么干）
+    source_type: 开放标准
+    url: https://agentskills.io/specification
+  - id: 5
+    name: Claude Code Skills 实践
+    description: frontmatter 字段（when_to_use/disable-model-invocation/user-invocable）、子代理 fork 执行、!command 动态上下文注入、hooks 组合
+    source_type: 官方文档
+    url: https://code.claude.com/docs/en/skills
+  - id: 6
+    name: anthropics/skills 官方仓库与 skill-creator 模板
+    description: 官方示例仓库结构、skill-creator 的 init/package 流程、scripts/references/assets 目录组织
+    source_type: 官方仓库
+    url: https://github.com/anthropics/skills
+  - id: 7
+    name: 社区与市场实践
+    description: awesome-claude-skills、SkillsMP 等市场质量分层；安慰剂 Skill、父 Skill 膨胀、盲目装包等反模式；正向案例（一个正则+失败条件、父索引+叶子编排）
+    source_type: 社区
+    url: https://github.com/awesome-claude-skills
+  - id: 8
+    name: Skill 测试与评估闭环
+    description: 测试矩阵（正常/边界/越界不触发）、expected/negative trigger 测试、多模型测试（Haiku/Sonnet/Opus）、PreToolUse 用量度量、LLM-as-judge
+    source_type: 方法论
+    url: https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices
+  - id: 9
+    name: 组合、子代理执行与动态上下文注入
+    description: manifest 而非 manual 模式（父 Skill 只做索引<100行）、context:fork 子代理、!command 动态注入实时数据、按名称引用组合
+    source_type: 高级模式
+    url: https://code.claude.com/docs/en/skills
+  - id: 10
+    name: Token 预算与上下文工程量化
+    description: 渐进式披露成本分层（元数据~100 token / 指令<5000 token / 资源按需）、上下文腐烂、压缩与拆分阈值（>75%压缩、>100k拆子代理）、缓存命中率
+    source_type: 方法论
+    url: https://mallary.ai/blog/context-engineering-for-agents
+  - id: 11
+    name: 通用上下文工程原则
+    description: prompt 模块化、渐进式加载、单一职责的通用工程总结，作为各平台实践的理论底座
+    source_type: 通用原则
+    url: https://www.anthropic.com/engineering
+
+execution:
+  batch_size: 4
+  items_per_agent: 3-4
+  output_dir: ./results
+  batches:
+    - batch: 1
+      items: [1, 2, 3, 11]
+      theme: 官方规范与一手工程经验
+    - batch: 2
+      items: [4, 5, 9, 10]
+      theme: 标准生态与高级执行模式
+    - batch: 3
+      items: [6, 7]
+      theme: 官方仓库与社区实践
+    - batch: 4
+      items: [8]
+      theme: 测试评估闭环
